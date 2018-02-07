@@ -37,6 +37,7 @@ setup(
     install_requires=[
         'aspy.yaml',
         'cached-property',
+        'cfgv',
         'identify>=1.0.0',
         'nodeenv>=0.11.1',
         'pyyaml',

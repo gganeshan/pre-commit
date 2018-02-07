@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 
+import cfgv
 import pytest
 
-from pre_commit import schema
 from pre_commit.clientlib import check_language
 from pre_commit.clientlib import check_type_tag
 from pre_commit.clientlib import CONFIG_HOOK_DICT
@@ -16,21 +16,21 @@ from testing.util import get_resource_path
 
 def is_valid_according_to_schema(obj, obj_schema):
     try:
-        schema.validate(obj, obj_schema)
+        cfgv.validate(obj, obj_schema)
         return True
-    except schema.ValidationError:
+    except cfgv.ValidationError:
         return False
 
 
 @pytest.mark.parametrize('value', ('not a language', 'python3'))
 def test_check_language_failures(value):
-    with pytest.raises(schema.ValidationError):
+    with pytest.raises(cfgv.ValidationError):
         check_language(value)
 
 
 @pytest.mark.parametrize('value', ('definitely-not-a-tag', 'fiel'))
 def test_check_type_tag_failures(value):
-    with pytest.raises(schema.ValidationError):
+    with pytest.raises(cfgv.ValidationError):
         check_type_tag(value)
 
 
@@ -116,8 +116,8 @@ def test_config_with_local_hooks_definition_fails():
             'files': '^(.*)$',
         }],
     }]}
-    with pytest.raises(schema.ValidationError):
-        schema.validate(config_obj, CONFIG_SCHEMA)
+    with pytest.raises(cfgv.ValidationError):
+        cfgv.validate(config_obj, CONFIG_SCHEMA)
 
 
 @pytest.mark.parametrize(
@@ -147,7 +147,7 @@ def test_config_with_local_hooks_definition_fails():
     ),
 )
 def test_config_with_local_hooks_definition_passes(config_obj):
-    schema.validate(config_obj, CONFIG_SCHEMA)
+    cfgv.validate(config_obj, CONFIG_SCHEMA)
 
 
 def test_config_schema_does_not_contain_defaults():
@@ -155,7 +155,7 @@ def test_config_schema_does_not_contain_defaults():
     will clobber potentially useful values in the backing manifest. #227
     """
     for item in CONFIG_HOOK_DICT.items:
-        assert not isinstance(item, schema.Optional)
+        assert not isinstance(item, cfgv.Optional)
 
 
 @pytest.mark.parametrize(
